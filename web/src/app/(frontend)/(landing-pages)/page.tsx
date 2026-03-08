@@ -1,8 +1,7 @@
 import LandingPagesNav from "@/components/base/nav/InitialNav";
-import Embarcar from "./_components/Embarcar";
 import { headers } from "next/headers";
 import { auth } from "@/auth";
-import CarouselExample from "./_components/CarouselExample";
+import ProdutoCard from "./_components/ProdutoCard";
 
 export default async function Home() {
   const session = await auth.api.getSession({
@@ -11,21 +10,34 @@ export default async function Home() {
   
   const isLogged = !!session?.user;
 
+  // Sua lista de produtos alvinegros
+  const produtos = [
+    { id: 1, nome: "Liquidificador do Corinthians", preco: 250.00, descricao: "Fabricado para triturar tudo verde" },
+    { id: 2, nome: "Geladeira Corinthians", preco: 120.50, descricao: "Quando você abre ela grita vai Corinthians" },
+    { id: 3, nome: "Televisão Corinthians", preco: 1500.00, descricao: "Transmite apenas jogos do Corinthians" },
+    { id: 4, nome: "Air Fryer Corinthians", preco: 15.90, descricao: "Feita para assar porco" },
+  ];
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gray-50">
+      {}
       <LandingPagesNav isLogged={isLogged} />
       
-      <main className="h-[70vh] w-full pt-20 pb-16 flex flex-col items-center justify-center text-center">
-        <h1 className="font-bold text-5xl text-pink-800">Página de Exemplo</h1>
-        <p className="pt-4 text-xl">Comece a editar seu site em <em className="text-pink-400">/app/(frontend)/(landing-pages)/page.tsx</em></p>
+      <main className="max-w-6xl mx-auto pt-24 pb-16 px-4">
+        <h1 className="font-bold text-4xl text-gray-900 text-center mb-10">Lojinha do Gustavo - Corinthians 🦅</h1>
+        
+        {/* Grid para garantir a responsividade pedida no PDF */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {produtos.map((produto) => (
+            <ProdutoCard 
+              key={produto.id} 
+              nome={produto.nome} 
+              preco={produto.preco} 
+              descricao={produto.descricao} 
+            />
+          ))}
+        </div>
       </main>
-
-      <div className="w-full flex items-center justify-center">
-        <Embarcar isLogged={isLogged} />
-      </div>
-
-      <p className="text-center pt-8">um carousel de exemplo :)</p>
-      <CarouselExample />
     </div>
   );
 }
