@@ -8,9 +8,9 @@ import CartModal from "./_components/Popup";
 export default function Home() {
   const produtos = [
     { id: 1, nome: "Liquidificador", preco: 250.00, descricao: "Tritura tudo", imagem: "/icons/liquidificador.png" },
-    { id: 2, nome: "Geladeira", preco: 120.50, descricao: "Grita vai Corinthians", imagem: "/icons/geladeira.png" },
+    { id: 2, nome: "Geladeira", preco: 1200.50, descricao: "Grita vai Corinthians", imagem: "/icons/geladeira.png" },
     { id: 3, nome: "Televisão", preco: 1500.00, descricao: "Só passa jogos do Timão", imagem: "/icons/televisao.png" },
-    { id: 4, nome: "Air Fryer", preco: 15.90, descricao: "Assa porco", imagem: "/icons/airfryer.png" },
+    { id: 4, nome: "Air Fryer", preco: 150.51, descricao: "Assa porco", imagem: "/icons/airfryer.png" },
   ];
 
   const [carrinho, setCarrinho] = useState<Record<number, number>>({});

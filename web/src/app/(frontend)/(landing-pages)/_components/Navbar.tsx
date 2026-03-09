@@ -15,11 +15,16 @@ export default function Navbar({ totalItens, precoTotal, onOpenCart }: NavbarPro
         <span className="font-bold text-xl">Lojinha do Timão 🦅</span>
       </div>
       
-      <div 
-        onClick={onOpenCart} 
-        className="bg-white text-black px-4 py-2 rounded-full font-bold cursor-pointer hover:bg-gray-200 transition-colors"
-      >
-        Carrinho: {totalItens} | R$ {precoTotal.toFixed(2)}
+      <div className="flex items-center gap-6">
+        {/* Adicionando o nome do usuário fictício aqui */}
+        <span className="hidden md:inline font-medium">Usuário: Gustavo Fiel</span>
+        
+        <div 
+          onClick={onOpenCart} 
+          className="bg-white text-black px-4 py-2 rounded-full font-bold cursor-pointer hover:bg-gray-200 transition-colors"
+        >
+          Carrinho: {totalItens} | R$ {precoTotal.toFixed(2)}
+        </div>
       </div>
     </nav>
   );
