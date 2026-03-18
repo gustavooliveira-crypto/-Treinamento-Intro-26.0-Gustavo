@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "mongodb"
-  url      = env("DATABASE_URL")
+  url      = "mongodb+srv://gustavooliveira_db_user:6JcdghwDvRPGlEnx@cluster0.cshrnay.mongodb.net/lojinha?appName=Cluster0"
 }
 
 enum Role {
@@ -14,44 +14,37 @@ enum Role {
   SUPER_ADMIN
 }
 
-// modelos de exemplo abaixo (pode deletar)
-model Curso {
-  id        String @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  descricao String
-  slug      String @unique
+model Compra {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  precoTotal Float
 
-  materiasRelacionadas CursoMateriaRelacionada[]
+  userId     String
+  user       User      @relation(fields: [userId], references: [id])
+
+  produtoIds String[]  @db.ObjectId
+  produtos   Produto[] @relation(fields: [produtoIds], references: [id])
 }
 
-model CursoMateriaRelacionada {
-  id        String @id @default(auto()) @map("_id") @db.ObjectId
+model Produto {
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  nome         String
+  descricao    String
+  preco        Float
 
-  curso   Curso  @relation(fields: [cursoId], references: [id])
-  cursoId String
+  categoriaIds String[]    @db.ObjectId
+  categorias   Categoria[] @relation(fields: [categoriaIds], references: [id])
 
-  materia   Materia @relation(fields: [materiaId], references: [id])
-  materiaId String
-
-  @@unique([cursoId, materiaId])
+  compraIds    String[]    @db.ObjectId
+  compras      Compra[]    @relation(fields: [compraIds], references: [id])
 }
 
-model Materia {
-  id                 String                    @id @default(uuid()) @map("_id")
-  name               String
-  descricao          String
-  cor                String
-  slug               String                    @unique
-  cursosRelacionados CursoMateriaRelacionada[]
-}
+model Categoria {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  nome       String
 
-model Licao {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId // id base do mongodb, + perfomance
-  name      String
-  descricao String
-  archived  Boolean? @default(false)
+  produtoIds String[]  @db.ObjectId
+  produtos   Produto[] @relation(fields: [produtoIds], references: [id])
 }
-// modelos de exemplo acima (pode deletar)
 
 model User {
   // nao mexer entre aqui >
@@ -67,14 +60,10 @@ model User {
   role          Role      @default(USER)
   // < e aqui
 
-
+  compras       Compra[]
 
   @@map("user")
 }
-
-
-
-
 
 // evitar mexer daqui pra baixo
 // nesses 3 modelos do better auth
