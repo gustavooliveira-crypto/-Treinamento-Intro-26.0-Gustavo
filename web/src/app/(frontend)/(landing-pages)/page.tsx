@@ -1,31 +1,59 @@
-import LandingPagesNav from "@/components/base/nav/InitialNav";
-import Embarcar from "./_components/Embarcar";
-import { headers } from "next/headers";
-import { auth } from "@/auth";
-import CarouselExample from "./_components/CarouselExample";
+"use client";
 
-export default async function Home() {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  });
-  
-  const isLogged = !!session?.user;
+import { useState } from "react";
+import Navbar from "./_components/Navbar";
+import ProdutoCard from "./_components/ProdutoCard";
+import CartModal from "./_components/Popup";
+
+export default function Home() {
+  const produtos = [
+    { id: 1, nome: "Liquidificador", preco: 250.00, descricao: "Tritura tudo", imagem: "/icons/liquidificador.png" },
+    { id: 2, nome: "Geladeira", preco: 1200.50, descricao: "Grita vai Corinthians", imagem: "/icons/geladeira.png" },
+    { id: 3, nome: "Televisão", preco: 1500.00, descricao: "Só passa jogos do Timão", imagem: "/icons/televisao.png" },
+    { id: 4, nome: "Air Fryer", preco: 150.51, descricao: "Assa porco", imagem: "/icons/airfryer.png" },
+  ];
+
+  const [carrinho, setCarrinho] = useState<Record<number, number>>({});
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
+  const alterarQuantidade = (id: number, delta: number) => {
+    setCarrinho((prev) => {
+      const novaQtd = (prev[id] || 0) + delta;
+      return { ...prev, [id]: novaQtd > 0 ? novaQtd : 0 };
+    });
+  };
+
+  const totalItens = Object.values(carrinho).reduce((a, b) => a + b, 0);
+  const precoTotal = produtos.reduce((acc, prod) => acc + (carrinho[prod.id] || 0) * prod.preco, 0);
+
+  const itensNoCarrinho = produtos
+    .filter((p) => (carrinho[p.id] || 0) > 0)
+    .map((p) => ({ ...p, quantidade: carrinho[p.id] }));
 
   return (
-    <div className="min-h-screen">
-      <LandingPagesNav isLogged={isLogged} />
+    <div className="min-h-screen bg-gray-50">
+      <Navbar totalItens={totalItens} precoTotal={precoTotal} onOpenCart={() => setIsCartOpen(true)} />
       
-      <main className="h-[70vh] w-full pt-20 pb-16 flex flex-col items-center justify-center text-center">
-        <h1 className="font-bold text-5xl text-pink-800">Página de Exemplo</h1>
-        <p className="pt-4 text-xl">Comece a editar seu site em <em className="text-pink-400">/app/(frontend)/(landing-pages)/page.tsx</em></p>
+      <CartModal 
+        isOpen={isCartOpen} 
+        onClose={() => setIsCartOpen(false)} 
+        itens={itensNoCarrinho} 
+        total={precoTotal} 
+      />
+      
+      <main className="max-w-6xl mx-auto pt-24 pb-16 px-4">
+        <h1 className="text-4xl font-bold text-center mb-10">Lojinha do Timão 🦅</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {produtos.map((p) => (
+            <ProdutoCard 
+              key={p.id} {...p} 
+              quantidade={carrinho[p.id] || 0}
+              onAdicionar={() => alterarQuantidade(p.id, 1)}
+              onRemover={() => alterarQuantidade(p.id, -1)}
+            />
+          ))}
+        </div>
       </main>
-
-      <div className="w-full flex items-center justify-center">
-        <Embarcar isLogged={isLogged} />
-      </div>
-
-      <p className="text-center pt-8">um carousel de exemplo :)</p>
-      <CarouselExample />
     </div>
   );
 }
